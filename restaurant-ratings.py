@@ -1,6 +1,21 @@
 import random
 
-def get_restaurant_ratings(rating_file):
+def display_restaurants(display_ratings, restaurants):
+    """ Displays all restaurants with optional ratings """
+    sorted_restaurants = sorted(restaurants.items())
+
+    if display_ratings:
+        for restaurant, rating in sorted_restaurants:
+            print "{} is rated at {}.".format(restaurant, rating)
+    
+    else:
+        for restaurant, rating in sorted_restaurants:
+            print "{}".format(restaurant)
+
+
+def rate_restaurants(rating_file):
+    """ Interactive tool allowing user to view, add, and update restaurant
+         ratings"""
     restaurants_and_ratings = {}
     
     with open(rating_file) as restaurant_ratings:
@@ -11,15 +26,13 @@ def get_restaurant_ratings(rating_file):
     while True:
         print "\n"
         print ("Would you like to see restaurant ratings (1), or rate"
-               " a new restaurant(2), or update a random restaurant's rating(3),"
+               " a new restaurant(2), or update a restaurant's rating(3),"
                " or quit(4)?")
         user_choice = raw_input("Make your choice: ")
 
         if user_choice == '1':
-            sorted_restaurants = sorted(restaurants_and_ratings.items())
-
-            for restaurant, rating in sorted_restaurants:
-                print "{} is rated at {}.".format(restaurant, rating)
+            # Display restaurants with ratings
+            display_restaurants(True, restaurants_and_ratings)
 
         elif user_choice == '2':
             user_restaurant = raw_input("Please provide a restaurant name: ")
@@ -28,12 +41,15 @@ def get_restaurant_ratings(rating_file):
             restaurants_and_ratings[user_restaurant] = int(user_rating)
 
         elif user_choice == '3':
-            random_rest = random.choice(restaurants_and_ratings.keys())
-            print ("What is your new rating for {}. Current rating."
-                  " is {}".format(random_rest, restaurants_and_ratings[random_rest]))
-            user_new_rating = raw_input("Enter rating between 1 and 5: ")
+            # Display restaurants without ratings
+            display_restaurants(False, restaurants_and_ratings)
+            chosen_rest = raw_input("Enter the restaurant to rate: ")
 
-            restaurants_and_ratings[random_rest] = int(user_new_rating)
+            if chosen_rest in restaurants_and_ratings:
+                user_new_rating = raw_input("Enter rating between 1 and 5: ")
+                restaurants_and_ratings[chosen_rest] = int(user_new_rating)
+            else:
+                print "You have chosen an invalid restaurant."
         
         elif user_choice == '4':
             break
@@ -41,4 +57,4 @@ def get_restaurant_ratings(rating_file):
         else:
             print "Try again"
 
-get_restaurant_ratings('scores.txt')
+rate_restaurants('scores.txt')
